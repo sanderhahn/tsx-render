@@ -22,6 +22,16 @@ More examples:
 - [Function Component](src/examples/function.tsx)
 - [Class Component](src/examples/class.tsx)
 
+## Optimization
+
+The `createElement` representation makes it impossible to make a distinction
+between static and dynamic values in the tree. This makes it difficult to optimize
+html generation by aggregating static output. The TypeScript parser provides
+a visitor interface that keeps this information intact.
+
+- [parse.ts](src/parse.ts)
+
 References:
 
 - [TypeScript JSX](https://www.typescriptlang.org/docs/handbook/jsx.html)
+
