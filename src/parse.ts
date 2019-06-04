@@ -1,15 +1,29 @@
 import ts from "typescript";
 
-const code = "<a href={anchor.href}>{anchor.title}</a>";
-const src = ts.createSourceFile("tag.tsx", code, ts.ScriptTarget.Latest, true);
+const src = "<button on:click={e => counter += 1}>Click {counter}</button>";
+const tree = ts.createSourceFile("tag.tsx", src, ts.ScriptTarget.Latest, true);
 
-let indent = 0;
-function print(node: ts.Node) {
-    const kind = ts.SyntaxKind[node.kind];
-    console.log(new Array(indent + 1).join(" ") + kind, node.getText());
-    indent++;
-    ts.forEachChild(node, print);
-    indent--;
+function walkTree(
+  node: ts.Node,
+  enter: (node: ts.Node) => void,
+  leave: (node: ts.Node) => void
+) {
+  enter(node);
+  for (const child of node.getChildren()) {
+    walkTree(child, enter, leave);
+  }
+  leave(node);
 }
 
-print(src);
+let level = 0;
+walkTree(
+  tree,
+  (node: ts.Node) => {
+    const kind = ts.SyntaxKind[node.kind];
+    console.log(Array(level).join(" "), kind, `: '${node.getFullText()}'`);
+    level += 2;
+  },
+  (node: ts.Node) => {
+    level -= 2;
+  }
+);
